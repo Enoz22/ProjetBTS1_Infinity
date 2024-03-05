@@ -13,12 +13,6 @@ registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
 
 const prisma = new PrismaClient();
 
-export const config = {
-  api: {
-      bodyParser: false,
-  },
-};
-
 export default function NewCar(props: { newCar: Function }) {
   const [cars, setCars] = useState([]);
   const [displayToast, setDisplayToast] = useState(false);
@@ -39,24 +33,6 @@ export default function NewCar(props: { newCar: Function }) {
     event.preventDefault();
   
     const formData = new FormData(event.currentTarget);
-    let imagePath = ''; // Chemin de l'image à enregistrer dans la DB
-    if (carImages.length > 0) {
-      formData.append('image', carImages[0].file);
-  
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-  
-      if (uploadResponse.ok) {
-        const uploadData = await uploadResponse.json();
-        imagePath = uploadData.path;
-      } else {
-        console.error('Erreur lors de l\'upload de l\'image');
-        return;
-      }
-    }
-  
     const carData = {
       marque: formData.get("marque"),
       modele: formData.get("modele"),
@@ -64,7 +40,7 @@ export default function NewCar(props: { newCar: Function }) {
       prixLocationParJour: parseFloat(formData.get("prixLocationParJour")?.toString() || "0"),
       description: formData.get("description"),
       statutDisponibilite: formData.get("statutDisponibilite"),
-      imagePath,
+      cheminImage: formData.get("carImages"),
     };
 
     const carResponse = await fetch("/api/cars", {
