@@ -1,77 +1,50 @@
-"use client";
+import React, { useState, FormEvent } from "react";
+import { FilePond, registerPlugin } from "react-filepond";
+import "filepond/dist/filepond.min.css";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 
-import { PrismaClient } from "@prisma/client";
-import type { Car } from "@prisma/client";
-import { useState, useEffect } from "react";
+// Register the plugins
+registerPlugin(FilePondPluginImagePreview);
 
-import { FilePond, registerPlugin } from 'react-filepond';
-import 'filepond/dist/filepond.min.css';
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
-import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
-registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType);
-
-const prisma = new PrismaClient();
-
-export default function NewCar(props: { newCar: Function }) {
-  const [cars, setCars] = useState([]);
+export default function Home() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [displayToast, setDisplayToast] = useState(false);
   const [messageToast, setMessageToast] = useState("");
-  const [carImages, setCarImages] = useState<any[]>([]);
+  const [images, setImages] = useState<any[]>([]);
 
-
-  useEffect(() => {
-    async function fetchCars() {
-      const response = await fetch('/api/cars');
-      const data = await response.json();
-      setCars(data);
-    }
-    fetchCars();
-  }, []);
-
-  async function addCar(event: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-  
-    const formData = new FormData(event.currentTarget);
-    const carData = {
-      marque: formData.get("marque"),
-      modele: formData.get("modele"),
-      annee: parseInt(formData.get("annee")?.toString() || "0"),
-      prixLocationParJour: parseFloat(formData.get("prixLocationParJour")?.toString() || "0"),
-      description: formData.get("description"),
-      statutDisponibilite: formData.get("statutDisponibilite"),
-      cheminImage: formData.get("carImages"),
-    };
+    setIsLoading(true);
 
-    const carResponse = await fetch("/api/cars", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(carData),
-    });
-  
-    if (carResponse.status === 200) {
-      const car: Car = await carResponse.json();
-      props.newCar(car);
-      setMessageToast("Nouveau véhivule ajouté");
-      setDisplayToast(true);
-      setTimeout(() => {
-        setDisplayToast(false);
-      }, 2000);
-    }
-    else {
+    try {
+      const formData = new FormData(event.currentTarget);
+      if (images.length > 0) {
+        formData.append("images", images[0].file);
+      }
+      const response = await fetch("/api/cars", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMessageToast("Véhicule ajouté avec succès !");
+        setDisplayToast(true);
+      } else {
+        throw new Error('Échec de l\'ajout du véhicule');
+      }
+    } catch (error) {
+      console.error(error);
       setMessageToast("Erreur lors de l'ajout du véhicule");
       setDisplayToast(true);
-      setTimeout(() => {
-        setDisplayToast(false);
-      }, 2000);
+    } finally {
+      setIsLoading(false);
     }
   }
-
   return (
     <>
-      <form className="m-20" onSubmit={addCar}>
+      <form className="m-20" onSubmit={onSubmit}>
         <label className="form-control w-full max-w-xs">
           <div className="label">
             <span className="label-text">Marque du vehicule :</span>
@@ -151,13 +124,12 @@ export default function NewCar(props: { newCar: Function }) {
             <span className="label-text">Image :</span>
           </div>
           <FilePond
-            files={carImages}
-            allowMultiple={true}
-            onupdatefiles={setCarImages}
-            acceptedFileTypes={['image/*']}
-            name="carImages"
-            labelIdle='Glissez-déposez vos images ici ou <span class="filepond--label-action">Parcourir</span>'
+            files={images}
+            onupdatefiles={setImages}
+            allowMultiple={false}
+            name="images"
             credits={false}
+            labelIdle='Glissez et déposez votre image ou <span class="filepond--label-action"> Parcourir </span>'
           />
         </label>
         <div className="label">

@@ -9,8 +9,6 @@ export default function RowUser(props:any) {
             <td>{props.user.nom}</td>
             <td>{props.user.prenom}</td>
             <td>{props.user.email}</td>
-            <td>{props.user.VendeurId}</td>
-            <td>{props.user.role}</td>
         </tr>
     );    
 }

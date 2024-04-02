@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export default function TabUsers(props: {users:User[]}) {
 
-  const filteredUsers = props.users.filter((user) => user.role !== 'vendeur');
+  const filteredUsers = props.users.filter((user) => user.role === 'client');
   
   return (
     <div className="overflow-x-auto">
@@ -18,8 +18,6 @@ export default function TabUsers(props: {users:User[]}) {
             <th>Nom</th>
             <th>Prenom</th>
             <th>Email</th>
-            <th>Vendeur Associer</th>
-            <th>Role</th>
           </tr>
         </thead>
         <tbody>

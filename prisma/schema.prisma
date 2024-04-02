@@ -19,18 +19,17 @@ model User {
   role             String
   reservations     Reservation[]
   reviews          Review[]
-  VendeurId        Int?
 }
 
 model Car {
   id                  Int                @id @default(autoincrement())
-  marque              String
-  modele              String
-  annee               Int
-  prixLocationParJour Float
-  description         String
-  statutDisponibilite String
-  cheminImage         String
+  marque              String?
+  modele              String?
+  annee               Int?
+  prixLocationParJour Float?
+  description         String?
+  statutDisponibilite String?
+  cheminImage         String?
   reservations        Reservation[]
   reviews             Review[]
   maintenanceHistory  MaintenanceHistory[]

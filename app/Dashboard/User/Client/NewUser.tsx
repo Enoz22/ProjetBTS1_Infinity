@@ -2,7 +2,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import type { User } from "@prisma/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const prisma = new PrismaClient();
 
@@ -10,30 +10,28 @@ export default function NewUser(props: { newUser: Function }) {
   const [displayToast, setDisplayToast] = useState(false);
   const [messageToast, setMessageToast] = useState("");
 
-  async function addVendeur(formData: FormData) {
-    // appel de l'api pour mettre le nouveau client en base
+  async function addUser(formData: FormData) {
     const response = await fetch("/api/user", {
       method: "POST",
       body: JSON.stringify({
         nom: formData.get("nom"),
         prenom: formData.get("prenom"),
         email: formData.get("email"),
-        telephone: formData.get("telephone"),
-        role: "vendeur", 
+        role: "client", 
       }),
     });
 
     if (response.status === 200) {
       const user: User = await response.json();
       props.newUser(user);
-      setMessageToast("Nouveau vendeur ajouté");
+      setMessageToast("Nouveau client ajouté");
       setDisplayToast(true);
       setTimeout(() => {
         setDisplayToast(false);
       }, 2000);
     }
     else {
-      setMessageToast("Erreur lors de l'ajout du vendeur");
+      setMessageToast("Erreur lors de l'ajout du client");
       setDisplayToast(true);
       setTimeout(() => {
         setDisplayToast(false);
@@ -44,10 +42,10 @@ export default function NewUser(props: { newUser: Function }) {
 
   return (
     <>
-      <form className="m-20" action={addVendeur}>
+      <form className="m-20" action={addUser}>
         <label className="form-control w-full max-w-xs"></label>
           <div className="label">
-            <span className="label-text">Nom du vendeur :</span>
+            <span className="label-text">Nom du client :</span>
           </div>
         <input
           required
@@ -58,7 +56,7 @@ export default function NewUser(props: { newUser: Function }) {
         />
         <label className="form-control w-full max-w-xs"></label>
           <div className="label">
-            <span className="label-text">Prenom du vendeur :</span>
+            <span className="label-text">Prenom du client :</span>
           </div>
         <input
           required
@@ -69,23 +67,12 @@ export default function NewUser(props: { newUser: Function }) {
         />
         <label className="form-control w-full max-w-xs"></label>
           <div className="label">
-            <span className="label-text">Email du vendeur :</span>
+            <span className="label-text">Email du client :</span>
           </div>
         <input
           required
           name="email"
           type="email"
-          placeholder="..."
-          className="input input-bordered w-full max-w-xs"
-        />
-        <label className="form-control w-full max-w-xs"></label>
-          <div className="label">
-            <span className="label-text">Téléphone du vendeur :</span>
-          </div>
-        <input
-          required
-          name="telephone"
-          type="text"
           placeholder="..."
           className="input input-bordered w-full max-w-xs"
         />

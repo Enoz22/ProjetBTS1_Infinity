@@ -18,6 +18,7 @@ export default function TabCar(props: {cars:Car[]}) {
             <th>Année</th>
             <th>Prix journée</th>
             <th>Status</th>
+            <th>Image</th>
           </tr>
         </thead>
         <tbody>
