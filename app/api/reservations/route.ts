@@ -1,53 +1,37 @@
-import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  switch (req.method) {
-    case 'GET':
-      await getReservations(req, res);
-      break;
-    case 'POST':
-      await createReservation(req, res);
-      break;
-    default:
-      res.setHeader('Allow', ['GET', 'POST']);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
+    try {
+        const reservations = await prisma.reservation.findMany();
+        res.status(200).json(reservations);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des réservations", error);
+        res.status(500).json({ message: "Erreur interne du serveur" });
+    }
 }
 
-async function getReservations(req: NextApiRequest, res: NextApiResponse) {
-  const reservations = await prisma.reservation.findMany({
-    include: {
-      user: true,
-      car: true,
-    },
-  });
-  res.status(200).json(reservations);
-}
-
-async function createReservation(req: NextApiRequest, res: NextApiResponse) {
-  const { userId, carId, dateDebut, dateFin, prixTotal, statutReservation } = req.body;
-  
-  try {
-    const reservation = await prisma.reservation.create({
-      data: {
-        userId,
-        carId,
-        dateDebut: new Date(dateDebut),
-        dateFin: new Date(dateFin),
-        prixTotal,
-        statutReservation,
-      },
-    });
-
-    await prisma.car.update({
-      where: { id: carId },
-      data: { statutDisponibilite: 'Indisponible' },
-    });
-
-    res.status(200).json(reservation);
-  } catch (error) {
-    res.status(400).json({ message: "Erreur lors de la création de la réservation", error });
-  }
+// Traitement des requêtes POST
+export async function POST(req: NextApiRequest, res: NextApiResponse) {
+    try {
+        const { userId, carId, dateDebut, dateFin, statutReservation } = req.body;
+        const newReservation = await prisma.reservation.create({
+            data: {
+                userId,
+                carId,
+                dateDebut,
+                dateFin,
+                statutReservation,
+                prixTotal: 0, // Provide a default value for prixTotal
+                user: { connect: { id: userId } }, // Connect the user by their ID
+                car: { connect: { id: carId } }, // Connect the car by its ID
+            },
+        });
+        res.status(201).json(newReservation);
+    } catch (error) {
+        console.error("Erreur lors de la création de la réservation", error);
+        res.status(500).json({ message: "Erreur interne du serveur" });
+    }
 }
