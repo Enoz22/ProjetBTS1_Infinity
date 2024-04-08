@@ -25,7 +25,10 @@ export default function NavBarDashboard() {
                             <Link href="../Dashboard/Cars">Gestion voiture</Link>
                         </li>
                         <li>
-                            <Link href="../Dashboard/User">Gestion Client</Link>
+                            <Link href="../Dashboard/User">Gestion client</Link>
+                        </li>
+                        <li>
+                            <Link href="../Dashboard/UserCar">Gestion location</Link>
                         </li>
                         <li>
                             <Link href="../Dashboard/Admin">Administrateur</Link>
