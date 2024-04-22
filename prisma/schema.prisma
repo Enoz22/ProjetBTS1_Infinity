@@ -18,7 +18,6 @@ model User {
   dateInscription  DateTime?
   role             String
   reservations     Reservation[]
-  reviews          Review[]
 }
 
 model Car {
@@ -31,8 +30,6 @@ model Car {
   statutDisponibilite String?
   cheminImage         String?
   reservations        Reservation[]
-  reviews             Review[]
-  maintenanceHistory  MaintenanceHistory[]
 }
 
 model Reservation {
@@ -45,33 +42,4 @@ model Reservation {
   statutReservation String
   user             User      @relation(fields: [userId], references: [id])
   car              Car       @relation(fields: [carId], references: [id])
-  payment          Payment?
-}
-
-model Payment {
-  id            Int       @id @default(autoincrement())
-  reservationId Int       @unique
-  datePaiement  DateTime
-  methodePaiement String
-  reservation   Reservation @relation(fields: [reservationId], references: [id])
-}
-
-model Review {
-  id            Int       @id @default(autoincrement())
-  userId        Int
-  carId         Int
-  note          Int
-  commentaire   String
-  dateReview    DateTime
-  user          User      @relation(fields: [userId], references: [id])
-  car           Car       @relation(fields: [carId], references: [id])
-}
-
-model MaintenanceHistory {
-  id                Int     @id @default(autoincrement())
-  carId             Int
-  dateMaintenance   DateTime
-  details           String
-  cout              Float
-  car               Car     @relation(fields: [carId], references: [id])
 }

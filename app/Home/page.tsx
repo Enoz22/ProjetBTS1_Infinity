@@ -9,16 +9,6 @@ export default function Home() {
       <header>
       <div className="navbar bg-base-300">
       <div className="navbar-start">
-        <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
-          </div>
-          <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-            <li>
-              <Link href="/Dashboard">Dashboard Admin</Link>
-            </li>
-          </ul>
-        </div>
       </div>
         <div className="navbar-center">
           <a className="btn btn-ghost text-xl">Infinity</a>
@@ -33,9 +23,11 @@ export default function Home() {
         <div className="hero-overlay bg-opacity-60"></div>
         <div className="hero-content text-center text-neutral-content">
           <div className="max-w-md">
-            <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
-            <p className="mb-5">Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem quasi. In deleniti eaque aut repudiandae et a id nisi.</p>
-            <button className="btn btn-primary">Get Started</button>
+            <h1 className="mb-5 text-5xl font-bold">Bonjour !</h1>
+            <p className="mb-5">Bienvenue sur l'application de gestion de location de voitures de luxe. Connectez-vous pour accéder au dashboard.</p>
+            <Link href="/Dashboard">
+              <button className="btn btn-primary">Connexion</button>
+            </Link>
           </div>
         </div>
       </div>
