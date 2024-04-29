@@ -10,7 +10,7 @@ export async function verifyAdminUser(email: string, password: string) {
       },
     });
 
-    if (user && user.role === 'admin' && user.motDePasse === password) {
+    if (user && (user.role === 'admin' || user.role === 'superadmin') && user.motDePasse === password) {
       const { motDePasse, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } else {

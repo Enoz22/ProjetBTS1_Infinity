@@ -25,3 +25,13 @@
     )
     rgb(var(--background-start-rgb));
 } */
+
+.password {
+  filter: blur(5px);  /* Applique un flou pour masquer le texte */
+  transition: filter 0.3s;  /* Rend le changement de flou plus doux */
+  cursor: pointer;  /* Change le curseur pour indiquer qu'il est interactif */
+}
+
+.password:hover {
+  filter: none;  /* Retire le flou lorsque la souris est dessus */
+}

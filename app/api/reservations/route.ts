@@ -19,20 +19,34 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
     }
 }
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: Request, res: any) {
     try {
-        const { userId, carId, dateDebut, dateFin, statutReservation, prixTotal } = req.body;
+        // const { userId, carId, dateDebut, dateFin, statutReservation, prixTotal } = req.body;
+        const body = await req.json();
+        console.log(body);
         const newReservation = await prisma.reservation.create({
-            data: {
-                userId: parseInt(userId),
-                carId: parseInt(carId),
-                dateDebut: new Date(dateDebut),
-                dateFin: new Date(dateFin),
-                statutReservation,
-                prixTotal: parseFloat(prixTotal),
-            },
+            data: 
+            {
+                // userId: parseInt(body.userId),
+                // carId: parseInt(carId),
+                dateDebut: new Date(body.dateDebut),
+                dateFin: new Date(body.dateFin),
+                statutReservation: body.statutReservation,
+                prixTotal: parseFloat(body.prixTotal),
+                user: {
+                    connect: { id: parseInt(body.userId) }
+                },
+                car: {
+                    connect: { id: parseInt(body.carId) }
+                }
+            }
         });
-        res.status(201).json(newReservation);
+        // res.status(201).json(newReservation);
+        console.log(newReservation);
+        return new Response(JSON.stringify(newReservation), {
+            status:201,
+            headers: { "content-type": "application/json" },
+          });
     } catch (error) {
         console.error("Erreur lors de la création de la réservation", error);
         res.status(500).json({ message: "Erreur interne du serveur" });

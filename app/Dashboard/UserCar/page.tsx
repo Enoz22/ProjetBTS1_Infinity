@@ -82,12 +82,13 @@ const ReservationsPage = () => {
         const reservation = {
             userId: selectedClientId,
             carId: selectedCarId,
-            dateDebut,
-            dateFin,
+            dateDebut: dateDebut,
+            dateFin: dateFin,
             statutReservation: "Réservé",
             prixTotal: 100 // Assurez-vous que ce champ est bien calculé ou saisi
         };
 
+        console.log(reservation);
         try {
             const response = await fetch("/api/reservations", {
                 method: "POST",
