@@ -1,70 +1,61 @@
 "use client";
 
 import NavBarDashboard from "./NavBarDashboard/navbar";
-import TabUsers from "./User/Client/TabUsers";
-import NewUser from "./User/Client/NewUser";
-import TabCar from "./Cars/TabCar";
-import NewCar from "./Cars/NewCar";
-import { useEffect, useState } from "react";
-import type { User } from "@prisma/client";
-import type { Car } from "@prisma/client";
-import { useRouter } from 'next/navigation'
+import { Doughnut, Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 
-export default function Users() {
-    const [users, setUsers] = useState<User[]>([]);
-    const [cars, setCars] = useState<Car[]>([]);
-    const [chargementOk, setChargementOk] = useState(false);
-    const router = useRouter();
+ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
-    async function chargement() {
-        const reponseUser = await fetch("/api/user", {
-          method: "GET",
-        });
-        const dataUser = await reponseUser.json();
-        setUsers(dataUser);
-        const reponseCar = await fetch("/api/cars", {
-            method: "GET",
-        });
-        const dataCar = await reponseCar.json();
-        setCars(dataCar);
-    }
+const DashboardPage = () => {
+    const dataDoughnut = {
+        labels: ['Disponible', 'Indisponible'],
+        datasets: [
+            {
+                data: [44, 56],
+                backgroundColor: ['#10b981', '#3b82f6'],
+                borderColor: ['#047857', '#1e40af'],
+                borderWidth: 1,
+            },
+        ],
+    };
 
-    useEffect(() => {
-        chargement();
-        setChargementOk(true);
-    }, []);
+    const dataBar = {
+        labels: ['Janvier', 'Février', 'Mars', 'Avril'],
+        datasets: [
+            {
+                label: 'Réservations par mois',
+                data: [65, 59, 80, 81],
+                backgroundColor: ['#6366f1', '#ec4899', '#fbbf24', '#84cc16'],
+                borderColor: ['#4f46e5', '#db2777', '#f59e0b', '#65a30d'],
+                borderWidth: 1,
+            },
+        ],
+    };
 
-    function nouveauClient(user: User) {
-        setUsers([...users, user]);
-    }
-
-    function nouveauCar(car: Car) {
-        setCars([...cars, car]);
-    }
-
-    return(
+    return (
         <>
             <NavBarDashboard/>
-            <h1 className="m-10">Clients</h1>
-            <div className="mx-20">
-                {chargementOk ? (
-                    <TabUsers users={users} />
-                ) : (
-                    <div className="skeleton w-150 h-32"></div>
-                )}
-            </div>
-            <h1 className="m-10">Vehicules</h1>
-            <div className="mx-20">
-                {chargementOk ? (
-                    <TabCar cars={cars} />
-                ) : (
-                    <div className="skeleton w-150 h-32"></div>
-                )}
-            </div>
-            <div className="flex space-x-4 mx-20 my-10">
-                <NewUser newUser={nouveauClient} />
-                <NewCar newCar={nouveauCar} />
+            <br />
+            <br />
+            <div className="p-4 md:p-10">
+                <h2 className="text-2xl font-bold text-center mb-10">Dashboard</h2><br /><br />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="card bg-base-100 shadow-xl p-4">
+                        <h3 className="text-lg font-semibold">Statut des véhicules</h3>
+                        <div className="w-96 h-96" style={{ height: '400px' }}>
+                            <Doughnut data={dataDoughnut} options={{ maintainAspectRatio: true }} />
+                        </div>
+                    </div>
+                    <div className="card bg-base-100 shadow-xl p-4">
+                        <h3 className="text-lg font-semibold">Réservations par mois</h3>
+                        <div className="w-full" style={{ height: '400px' }}>
+                            <Bar data={dataBar} options={{ maintainAspectRatio: true }} />
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     );
-}
+};
+
+export default DashboardPage;
